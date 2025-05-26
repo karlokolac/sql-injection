@@ -6,12 +6,21 @@ import react from '@astrojs/react';
 
 import netlify from '@astrojs/netlify';
 
+import expressiveCode from 'astro-expressive-code';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
       plugins: [tailwindcss()]
     },
 
-  integrations: [react()],
+  integrations: [react(), expressiveCode({
+    themes: ["github-light", "github-dark"],
+    useDarkModeMediaQuery: true,
+    themeCssSelector: (theme) => {
+      const mode = theme.type === "dark" ? "dark" : "light";
+      return `[data-theme='${mode}']`;
+    },
+  })],
   adapter: netlify()
 });
