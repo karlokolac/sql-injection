@@ -17,25 +17,25 @@ interface Student extends RowDataPacket {
 export const prerender = false;
 
 // ! GET api/student - Samo testiranje (komentiraj prije predaje)
-export const GET: APIRoute = async () => {
-  try {
-    const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute<Student[]>("SELECT * FROM student");
-    await connection.end();
+// export const GET: APIRoute = async () => {
+//   try {
+//     const connection = await mysql.createConnection(dbConfig);
+//     const [rows] = await connection.execute<Student[]>("SELECT * FROM student");
+//     await connection.end();
 
-    return new Response(JSON.stringify(rows), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("database error:", error);
+//     return new Response(JSON.stringify(rows), {
+//       status: 200,
+//       headers: { "Content-Type": "application/json" },
+//     });
+//   } catch (error) {
+//     console.error("database error:", error);
 
-    return new Response(JSON.stringify({ error: "internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-};
+//     return new Response(JSON.stringify({ error: "internal server error" }), {
+//       status: 500,
+//       headers: { "Content-Type": "application/json" },
+//     });
+//   }
+// };
 
 // POST api/student (pretrazivanje po jmbagu)
 export const POST: APIRoute = async ({ request }) => {

