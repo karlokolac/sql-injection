@@ -1,0 +1,17 @@
+### /api/safe/student (provjera ako sve radi)
+### Ocekivani odgovor: 200 OK
+GET http://localhost:4321/api/safe/student
+
+### /api/safe/student (provjera ako radi s tocnim JMBAG-om)
+### Ocekivani odgovor: 200 OK
+POST http://localhost:4321/api/safe/student 
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=0246801234
+
+### /api/safe/student (provjera ako radi s netocnim JMBAG-om)
+### Ocekivani odgovor: 404 Not Found
+POST http://localhost:4321/api/safe/student
+Content-Type: application/x-www-form-urlencoded
+
+jmbag=netocanJmbag
