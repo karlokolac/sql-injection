@@ -24,6 +24,7 @@ export function GithubButton({ username, repo }: GithubButtonProps) {
       className={buttonVariants({ variant: "outline", size: "icon" })}
     >
       <GithubLogo />
+      GitHub
       <span className="sr-only">GitHub</span>
     </a>
   );

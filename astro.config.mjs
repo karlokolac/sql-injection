@@ -14,13 +14,16 @@ export default defineConfig({
       plugins: [tailwindcss()]
     },
 
-  integrations: [react(), expressiveCode({
-    themes: ["github-light", "github-dark"],
-    useDarkModeMediaQuery: true,
-    themeCssSelector: (theme) => {
-      const mode = theme.type === "dark" ? "dark" : "light";
-      return `[data-theme='${mode}']`;
-    },
-  })],
+  integrations: [
+    react(), 
+    expressiveCode({
+      themes: ["github-light", "github-dark"],
+      useDarkModeMediaQuery: true,
+      themeCssSelector: (theme) => {
+        const mode = theme.type === "dark" ? "dark" : "light";
+        return `[data-theme='${mode}']`;
+      },
+    }),
+  ],
   adapter: netlify()
 });
