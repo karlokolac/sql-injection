@@ -25,3 +25,32 @@ export function RenderTable(data: any) {
     </div>
   );
 }
+
+export function RenderMultiRowTable(data: any[]) {
+  if (!data || data.length === 0) return null;
+
+  const keys = Object.keys(data[0]);
+
+  return (
+    <div className="flex jusify-center min-w-md max-w-full overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            {keys.map((key) => (
+              <th key={key}>{key}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {keys.map((key) => (
+                <td key={key}>{row[key]?.toString() || "NULL"}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

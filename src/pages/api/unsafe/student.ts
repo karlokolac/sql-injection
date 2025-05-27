@@ -19,13 +19,18 @@ export const POST: APIRoute = async ({ request }) => {
     const [rows] = await connection.execute<any>(query);
     await connection.end();
 
+    if (rows.length === 0) {
+      return new Response(JSON.stringify({ error: "student nije pronađen" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     // query i count su samo za edukaciju, da se vidi tocno kaj
     // se izvrsava i kolko redaka je vratilo.
     return new Response(
       JSON.stringify({
         query: query,
         results: rows,
-        count: rows.length,
       }),
       {
         status: 200,

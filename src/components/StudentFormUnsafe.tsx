@@ -1,37 +1,30 @@
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RenderTable } from "./RenderTable";
+import { RenderMultiRowTable, RenderTable } from "./RenderTable";
 
-interface Student {
-  jmbag: string;
-  ime: string;
-  prezime: string;
-  oib: string;
-  email: string;
-  mobitel: string;
-  godinaUpisa: number;
-  status: "redovan" | "izvanredan" | "ispisan";
-  smjer: number;
+interface APIResponse {
+  query: string;
+  results: any[];
 }
 
 export function StudentForm() {
   const [jmbag, setJmbag] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [student, setStudent] = useState<Student | null>(null);
+  const [response, setResponse] = useState<APIResponse | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setStudent(null);
+    setResponse(null);
 
     try {
       const formData = new FormData();
       formData.append("jmbag", jmbag);
 
-      const response = await fetch("/api/safe/student", {
+      const response = await fetch("/api/unsafe/student", {
         method: "POST",
         body: formData,
       });
@@ -39,9 +32,9 @@ export function StudentForm() {
       const data = await response.json();
       if (data.error) {
         setError(data.error);
-        setStudent(null);
+        setResponse(null);
       } else {
-        setStudent(data);
+        setResponse(data);
         setError("");
       }
     } catch (error) {
@@ -56,11 +49,9 @@ export function StudentForm() {
       <form onSubmit={handleSubmit} className="mb-24">
         <h2>Pretraživanje studenata</h2>
         <Input
-          placeholder="1234567890"
+          placeholder="1234567890 ili ' OR '1'='1"
           value={jmbag}
-          pattern="^\d{10}$"
           required
-          title="JMBAG mora sadržavati točno 10 znamenki (0-9)"
           onChange={(e) => setJmbag(e.target.value)}
         />
         <Button type="submit" className="mt-2 w-full">
@@ -70,7 +61,15 @@ export function StudentForm() {
 
       {error && RenderTable({ error })}
 
-      {student && RenderTable(student)}
+      {response && (
+        <>
+          <div>
+            <code>{response.query}</code>
+          </div>
+
+          {response.results && RenderMultiRowTable(response.results)}
+        </>
+      )}
     </div>
   );
 }
