@@ -59,19 +59,20 @@ export const POST: APIRoute = async ({ request }) => {
     // npr: "12345678901" - netocno
     // npr: "1234 567890" - netocno
     // idk kak drukcije ovo projerit na brzinu
-    const jmbagRegex = /^\d{10}$/;
-    if (!jmbagRegex.test(jmbag)) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "neispravan format jmbag-a, jmbag mora biti tocno 10 znamenaka",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+    // ? Ne treba zapravo, baza i forma projeravaju format
+    // const jmbagRegex = /^\d{10}$/;
+    // if (!jmbagRegex.test(jmbag)) {
+    //   return new Response(
+    //     JSON.stringify({
+    //       error:
+    //         "neispravan format jmbag-a, jmbag mora biti tocno 10 znamenaka",
+    //     }),
+    //     {
+    //       status: 400,
+    //       headers: { "Content-Type": "application/json" },
+    //     }
+    //   );
+    // }
 
     const connection = await mysql.createConnection(dbConfig);
     const [rows] = await connection.execute<Student[]>(
@@ -81,7 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
     await connection.end();
 
     if (rows.length === 0) {
-      return new Response(JSON.stringify({ error: "student nije pronaden" }), {
+      return new Response(JSON.stringify({ error: "student nije pronađen" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
@@ -92,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("database error:", error);
+    console.error("database error: ", error);
 
     return new Response(JSON.stringify({ error: "internal server error" }), {
       status: 500,

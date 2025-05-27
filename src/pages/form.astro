@@ -1,0 +1,8 @@
+---
+import MainLayout from "@/layouts/mainLayout.astro";
+import { StudentForm } from "@/components/StudentFormSafe";
+---
+
+<MainLayout title="form">
+  <StudentForm client:load />
+</MainLayout>
