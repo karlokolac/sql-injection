@@ -52,15 +52,13 @@ export function StudentForm() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full mt-0 pt-0">
       <form onSubmit={handleSubmit} className="mb-24">
         <h2>Pretraživanje studenata</h2>
         <Input
           placeholder="1234567890"
           value={jmbag}
-          pattern="^\d{10}$"
           required
-          title="JMBAG mora sadržavati točno 10 znamenki (0-9)"
           onChange={(e) => setJmbag(e.target.value)}
         />
         <Button type="submit" className="mt-2 w-full">
