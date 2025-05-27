@@ -5,7 +5,7 @@ import { StudentForm as StudentFormUnsafe } from "./StudentFormUnsafe";
 export function FormTabs() {
   return (
     <Tabs defaultValue="safe" className="flex flex-col mx-auto mt-8 w-full">
-      <TabsList className="grid grid-cols-2 w-[350px] mx-auto items-center h-10">
+      <TabsList className="grid grid-cols-2 w-[290px] lg:w-[350px] mx-auto items-center h-10">
         <TabsTrigger value="safe" className="font-semibold">
           Sigurno
         </TabsTrigger>

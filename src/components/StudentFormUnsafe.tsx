@@ -63,7 +63,7 @@ export function StudentForm() {
 
       {response && (
         <>
-          <div>
+          <div className="text-center">
             <code>{response.query}</code>
           </div>
 

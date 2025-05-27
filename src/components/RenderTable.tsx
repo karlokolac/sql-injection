@@ -5,7 +5,7 @@ export function RenderTable(data: any) {
   const values = Object.values(data);
 
   return (
-    <div className="flex jusify-center min-w-md max-w-full overflow-x-auto">
+    <div className="flex jusify-center px-4 md:px-0 md:min-w-md max-w-full overflow-x-auto">
       <table>
         <thead>
           <tr>
@@ -32,7 +32,7 @@ export function RenderMultiRowTable(data: any[]) {
   const keys = Object.keys(data[0]);
 
   return (
-    <div className="flex jusify-center min-w-md max-w-full overflow-x-auto">
+    <div className="flex jusify-center px-4 md:px-0 md:min-w-md max-w-full overflow-x-auto">
       <table>
         <thead>
           <tr>
