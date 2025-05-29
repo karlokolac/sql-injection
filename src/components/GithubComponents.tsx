@@ -21,10 +21,9 @@ export function GithubButton({ username, repo }: GithubButtonProps) {
   return (
     <a
       href={href}
-      className={buttonVariants({ variant: "outline", size: "icon" })}
+      className={buttonVariants({ variant: "ghost", size: "icon" })}
     >
       <GithubLogo />
-      GitHub
       <span className="sr-only">GitHub</span>
     </a>
   );
@@ -42,10 +41,9 @@ export function GithubDropdown({ username, repo }: GithubDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="default">
+        <Button variant="ghost" size="default">
           <GithubLogo />
           <span className="sr-only">GitHub</span>
-          GitHub
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
