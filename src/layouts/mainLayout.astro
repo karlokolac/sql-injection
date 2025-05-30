@@ -65,7 +65,7 @@ const currentPath = Astro.url.pathname;
   </head>
   <body>
     <header
-      class="p-4 flex flex-row justify-between items-center z-50 top-0 sticky bg-background border-b"
+      class="p-2 flex flex-row justify-between items-center z-50 top-0 sticky bg-background border-b"
     >
       <div class="hidden md:block w-18"></div>
       <nav class="gap-2 flex">
@@ -93,7 +93,7 @@ const currentPath = Astro.url.pathname;
           })}
         >
           <p
-            class=`${currentPath === "/form" ? "text-primary" : "text-muted-foreground"}`
+            class=`${currentPath === "/form/" ? "text-primary" : "text-muted-foreground"}`
           >
             Form
           </p>

@@ -33,17 +33,8 @@ Neke velike kompanije koje su bile žrtve SQL injection napada:
 
  Primjer upita s dinamičkim generiranjem SQL-a (**loše**):
 
-```js title="/api/nesigurno/upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":12-14} collapse={1-9, 19-33, 35-41}
-import mysql from "mysql2/promise";
-
-const dbConfig = {
-  host: "localhost",
-  user: "ime_korisnika",
-  password: "lozinka_korisnika",
-  database: "ime_baze_podataka",
-};
-
-async function POST({request}) {
+```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28} 
+async function POST({ request }) {
   try {
 
     const jmbag = "0246801234";
@@ -57,24 +48,20 @@ async function POST({request}) {
       return new Response(JSON.stringify({ error: "Student nije pronađen" }), {
           status: 404,
           headers: { "Content-type": "application/json" }
-        }
-      );
+        });
     }
 
-    return new Response(
-      JSON.stringify(rezultati), {
+    return new Response(JSON.stringify(rezultati), {
         status: 200,
         headers: { "Content-type": "application/json" }
-      }
-    );
+      });
   } catch (error) {
     console.error("Error prilikom izvršavanja upita:", error);
 
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
         status: 500,
         headers: { "Content-Type": "application/json" }
-      }
-    );
+      });
   }
 }
 ```
@@ -95,7 +82,7 @@ Budući da se upit gradi povezivanjem stringova i pri tome se ne radi nikakva pr
 
 ### Kako popraviti ovaj primjer?
 
-Način na koji možemo poboljšati kod da spriječimo ovaj napad je zapravo vrlo jednostavan i može se napraviti za minutu ili dvije, korištenjem pripremljenih upita. Pripremljeni upiti su gotovo jednaki u sintaksi kao i standardni upiti, međutim umjesto umetnutih vrijednosti (kao u gornjem primjeru), na mjestima za parametre koriste **placeholdere**.
+Način na koji možemo poboljšati kod da spriječimo ovaj napad je zapravo vrlo jednostavan i može se napraviti za minutu ili dvije, korištenjem pripremljenih upita i osnovne provjere unosa. Pripremljeni upiti su gotovo jednaki u sintaksi kao i standardni upiti, međutim umjesto umetnutih vrijednosti (kao u gornjem primjeru), na mjestima za parametre koriste **placeholdere**.
 
 Osnovna sintaksa za MySQL (na gornjem primjeru):
 
@@ -108,3 +95,25 @@ Korištenje pripremljenih upita ima nekoliko prednosti:
 1. Bolje performanse baze
 2. Logika je odvojena od samih podataka
 3. Podaci se tretiraju kao tekstualni tipovi, a ne kao dio sql koda (upisivanjem na primjer `' OR '1'='1`, baza podataka probala bi naći studenta koji doslovno ima jmbag `' OR '1'='1`).
+
+Modificirani kod s pripremljenim upitom i osnovnom provjerom unosa:
+
+```js title="upit.js" del={4, 13} add={5, 7-10, 14}
+async function POST({ request }) {
+  try {
+    const jmbag = "0246801234";
+    const upit = "SELECT * FROM student WHERE jmbag = '" + jmbag + "'";
+    const upit = "SELECT * FROM student WHERE jmbag = ?";
+
+    const regex = /^[0-9]{10}$/;
+    if (!regex.test(jmbag)) {
+      // Ako jmbag ne odgovara formatu, vraćamo grešku
+    }
+
+    const connection = await mysql.createConnection(dbConfig);
+    const [rezultati] = await connection.execute(upit);
+    const [rezultati] = await connection.execute(upit, [jmbag]);
+    await connection.end();
+
+    // Ostatak ostaje isti
+```
