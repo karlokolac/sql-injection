@@ -16,28 +16,6 @@ interface Student extends RowDataPacket {
 
 export const prerender = false;
 
-// ! GET api/student - Samo testiranje (komentiraj prije predaje)
-// export const GET: APIRoute = async () => {
-//   try {
-//     const connection = await mysql.createConnection(dbConfig);
-//     const [rows] = await connection.execute<Student[]>("SELECT * FROM student");
-//     await connection.end();
-
-//     return new Response(JSON.stringify(rows), {
-//       status: 200,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     console.error("database error:", error);
-
-//     return new Response(JSON.stringify({ error: "internal server error" }), {
-//       status: 500,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   }
-// };
-
-// POST api/student (pretrazivanje po jmbagu)
 export const POST: APIRoute = async ({ request }) => {
   try {
     const formData = await request.formData();
@@ -51,15 +29,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Provjera formata JMBAG-a
-    // ^ - pocetak stringa
-    // \d{10} - tocno 10 znamenki (0-9)
-    // $ - kraj stringa
-    // npr: "1234567890" - tocno
-    // npr: "123456789" - netocno
-    // npr: "12345678901" - netocno
-    // npr: "1234 567890" - netocno
-    // idk kak drukcije ovo projerit na brzinu
-    // ? Ne treba zapravo, baza i forma projeravaju format
     // const jmbagRegex = /^\d{10}$/;
     // if (!jmbagRegex.test(jmbag)) {
     //   return new Response(
@@ -75,10 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
     // }
 
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute<Student[]>(
-      `SELECT * FROM student WHERE jmbag = ?`,
-      [jmbag]
-    );
+    const [rows] = await connection.execute<Student[]>(`SELECT * FROM student WHERE jmbag = ?`, [jmbag]);
     await connection.end();
 
     if (rows.length === 0) {

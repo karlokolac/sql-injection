@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { dbConfig } from "../dbconfig";
-import mysql, { type RowDataPacket } from "mysql2/promise";
+import mysql from "mysql2/promise";
 
 export const prerender = false;
 
@@ -25,8 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-    // query i count su samo za edukaciju, da se vidi tocno kaj
-    // se izvrsava i kolko redaka je vratilo.
+    // query samo za edukaciju, da se vidi tocno kaj se izvrsava
     return new Response(
       JSON.stringify({
         query: query,
@@ -35,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("database error: ", error);

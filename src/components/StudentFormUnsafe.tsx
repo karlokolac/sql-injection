@@ -14,7 +14,7 @@ export function StudentForm() {
   const [error, setError] = useState("");
   const [response, setResponse] = useState<APIResponse | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -42,7 +42,7 @@ export function StudentForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="flex flex-col items-center w-full">

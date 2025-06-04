@@ -21,7 +21,7 @@ export function StudentForm() {
   const [error, setError] = useState("");
   const [student, setStudent] = useState<Student | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -49,18 +49,13 @@ export function StudentForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="flex flex-col items-center w-full mt-0 pt-0">
       <form onSubmit={handleSubmit} className="mb-24">
         <h2>Pretraživanje studenata</h2>
-        <Input
-          placeholder="1234567890"
-          value={jmbag}
-          required
-          onChange={(e) => setJmbag(e.target.value)}
-        />
+        <Input placeholder="1234567890" value={jmbag} required onChange={(e) => setJmbag(e.target.value)} />
         <Button type="submit" className="mt-2 w-full">
           {loading ? "Tražim..." : "Traži studenta"}
         </Button>
