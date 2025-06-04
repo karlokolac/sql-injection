@@ -23,6 +23,7 @@ SELECT * FROM student WHERE ime = 'Karlo'; DROP TABLE student; --';
 Da bi ovaj upit stvarno rezultirao brisanjem cijele tablice studenata, mnogo stvari se mora savršteno posložiti. Korisnički račun morao bi imati `DROP` privilegije, baza podataka mora podržavati izvršavanje više naredbi u jednom pozivu, primarni ključ tablice ne smije biti vanjski ključ na druge tablice s `ON DELETE RESTRICT` ograničenjem i tako dalje. Međutim, čak i kad brisanje tablice nije moguće, SQL injection i dalje predstavlja ozbiljan sigurnosni rizik. Napadači mogu pristupiti osjetljivim podacima kao što su OIB-ovi, zaobići autentifikaciju i dobiti admistratorske privilegije ili modificirati postojeće podatke.
 
 Neke velike kompanije koje su bile žrtve SQL injection napada:
+
   - **Sony Pictures**: 2011 godine SQL injection napad rezultirao je krađom otprilike 77 milijuna PlayStation Network računa, ukupne štete oko 170 milijuna dolara
   - **Yahoo!**: Tvrtka je bila žrtva više napada između 2013 i 2016 godine, pri čemu je u najvećem napadu ukradeno preko pola milijuna email adresa i lozinka. Sveukupna šteta svih napada bila je preko 3 milijarde korisničkih računa.
   - **JPMorgan Chase**: JPMorgan Chase je jedna on nejvećih banka u Sjedinjenim Američkim državama. 2014 godine objavili su da su računi od preko 76 milijuna kućanstva kompromizirani. Ukradeni podaci uključuju imena, brojeve mobitle i email adrese korisnika, ali ne podatke vezane uz njihove financije.
@@ -33,8 +34,8 @@ Neke velike kompanije koje su bile žrtve SQL injection napada:
 
  Primjer upita s dinamičkim generiranjem SQL-a (**loše**):
 
-```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28} 
-async function POST({ request }) {
+```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28}
+const POST = async ({ request }) => {
   try {
 
     const jmbag = "0246801234";
@@ -46,22 +47,22 @@ async function POST({ request }) {
 
     if (rezultati.length === 0) {
       return new Response(JSON.stringify({ error: "Student nije pronađen" }), {
-          status: 404,
-          headers: { "Content-type": "application/json" }
-        });
+        status: 404,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     return new Response(JSON.stringify(rezultati), {
-        status: 200,
-        headers: { "Content-type": "application/json" }
-      });
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
   } catch (error) {
     console.error("Error prilikom izvršavanja upita:", error);
 
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      });
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 }
 ```
@@ -99,7 +100,7 @@ Korištenje pripremljenih upita ima nekoliko prednosti:
 Modificirani kod s pripremljenim upitom i osnovnom provjerom unosa:
 
 ```js title="upit.js" del={4, 13} add={5, 7-10, 14}
-async function POST({ request }) {
+const POST = async ({ request }) => {
   try {
     const jmbag = "0246801234";
     const upit = "SELECT * FROM student WHERE jmbag = '" + jmbag + "'";
