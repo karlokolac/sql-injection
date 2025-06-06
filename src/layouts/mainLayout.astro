@@ -5,7 +5,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 import { GithubDropdown } from "@/components/GithubComponents";
 import { buttonVariants } from "@/components/ui/button";
 
-const { title } = Astro.props;
+const { title, fullWidth = false } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -24,7 +24,7 @@ const currentPath = Astro.url.pathname;
         animation-timing-function: ease-out;
       }
 
-      .prose {
+      .prose:not(.prose-fw) {
         max-width: 80ch;
       }
     </style>
@@ -32,15 +32,10 @@ const currentPath = Astro.url.pathname;
     <script is:inline>
       function initializeTheme() {
         const getThemePreference = () => {
-          if (
-            typeof localStorage !== "undefined" &&
-            localStorage.getItem("theme")
-          ) {
+          if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
             return localStorage.getItem("theme");
           }
-          return window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         };
 
         const isDark = getThemePreference() === "dark";
@@ -64,9 +59,7 @@ const currentPath = Astro.url.pathname;
     </script>
   </head>
   <body>
-    <header
-      class="p-2 flex flex-row justify-between items-center z-50 top-0 sticky bg-background border-b"
-    >
+    <header class="p-2 flex flex-row justify-between items-center z-50 top-0 sticky bg-background border-b">
       <div class="hidden md:block w-18"></div>
       <nav class="gap-2 flex">
         <a
@@ -77,11 +70,7 @@ const currentPath = Astro.url.pathname;
             class: "text-lg font-semibold",
           })}
         >
-          <p
-            class=`${currentPath === "/" ? "text-primary" : "text-muted-foreground"}`
-          >
-            O temi
-          </p>
+          <p class=`${currentPath === "/" ? "text-primary" : "text-muted-foreground"}`>O temi</p>
         </a>
 
         <a
@@ -92,25 +81,18 @@ const currentPath = Astro.url.pathname;
             class: "text-lg font-semibold",
           })}
         >
-          <p
-            class=`${currentPath === "/form/" ? "text-primary" : "text-muted-foreground"}`
-          >
-            Forma
-          </p>
+          <p class=`${currentPath === "/form/" ? "text-primary" : "text-muted-foreground"}`>Forma</p>
         </a>
       </nav>
       <div class="gap-2 flex">
         <ModeToggle client:load />
-        <GithubDropdown
-          username="karlokolac"
-          repo="sql-injection"
-          client:load
-        />
+        <GithubDropdown username="karlokolac" repo="sql-injection" client:load />
       </div>
     </header>
 
     <main
-      class="container mx-auto prose dark:prose-invert lg:prose-lg px-4 py-6"
+      class={`container mx-auto prose dark:prose-invert lg:prose-lg px-4 py-6
+      ${fullWidth ? "prose-fw max-w-none" : ""}`}
     >
       <slot />
     </main>
