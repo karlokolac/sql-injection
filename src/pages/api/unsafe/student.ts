@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
     const query = "SELECT * FROM student WHERE jmbag = '" + jmbag + "'";
 
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute<any>(query);
+    const [rows] = await connection.query<any>(query);
     await connection.end();
 
     if (rows.length === 0) {
