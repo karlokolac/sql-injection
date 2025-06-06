@@ -145,6 +145,7 @@ Zaključimo da predavanje je točna vrijednost za stud_predmet 3 i na temelju to
 ```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28}
 const POST = async ({ request }) => {
   try {
+
     const jmbag = "0246801234";
     const upit = "SELECT * FROM student WHERE jmbag = '" + jmbag + "'";
 
