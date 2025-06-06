@@ -33,18 +33,20 @@ export const POST: APIRoute = async ({ request }) => {
     // if (!jmbagRegex.test(jmbag)) {
     //   return new Response(
     //     JSON.stringify({
-    //       error:
-    //         "neispravan format jmbag-a, jmbag mora biti tocno 10 znamenaka",
+    //       error: "neispravan format jmbag-a, jmbag mora biti točno 10 znamenaka",
     //     }),
     //     {
     //       status: 400,
     //       headers: { "Content-Type": "application/json" },
-    //     }
+    //     },
     //   );
     // }
 
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute<Student[]>(`SELECT * FROM student WHERE jmbag = ?`, [jmbag]);
+    const [rows] = await connection.execute<Student[]>(
+      `SELECT * FROM student WHERE jmbag = ?`,
+      [jmbag],
+    );
     await connection.end();
 
     if (rows.length === 0) {

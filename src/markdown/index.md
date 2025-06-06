@@ -2,39 +2,37 @@
 title: SQL injekcija
 ---
 
-# SQL Injekcija
+# SQL injekcija
 
 ## Teorijski uvod
 
-SQL injekcija je tehnika ubacivanja SQL koda u polja za korisnički unos, s ciljem dobivanja neovlaštenog pristupa informacijama ili uništavanja baze podataka. SQL injekcija moguća je samo kod upita koji uzimaju korisnički unos i rade SQL upit dinamički, bez provjere samog unosa. Ukoliko je aplikacija ranjiva, korisnik može kontrolirati što se izvršava na bazi podataka. Napad SQL injekcijom sastoji se od ubacivanja ili injekcije djelomičnog ili cijelog SQL upita pomoću polja za korisnički unos. Uspješan napad može rezultirati čitanjem osjetljivih informacija pohranjenih u bazi podataka,  modificiranjem podataka pomoću naredbi poput INSERT, UPDATE i DELETE, gašenje baze podataka, pronalaženjem i preuzimanjem datoteka iz datotečnog sustava baze podataka i u nekim slučajevima, izvršavanje naredbi na operacijskom sustavu.
+SQL injekcija je tehnika ubacivanja SQL koda u polja za korisnički unos, s ciljem dobivanja neovlaštenog pristupa informacijama ili uništavanja baze podataka. SQL injekcija moguća je samo kod upita koji uzimaju korisnički unos i rade SQL upit dinamički, bez provjere samog unosa. Ukoliko je aplikacija ranjiva, korisnik može kontrolirati što se izvršava na bazi podataka. Napad SQL injekcijom sastoji se od ubacivanja ili injekcije djelomičnog ili cijelog SQL upita pomoću polja za korisnički unos. Uspješan napad može rezultirati čitanjem osjetljivih informacija pohranjenih u bazi podataka, modificiranjem podataka pomoću naredbi poput INSERT, UPDATE i DELETE, gašenjem baze podataka, pronalaženjem i preuzimanjem datoteka iz datotečnog sustava baze podataka, i u nekim slučajevima, izvršavanjem naredbi na operacijskom sustavu.
 
 **Napadi se mogu podijeliti u 3 kategorije:**
 
-- **Napad unutar kanala** - Podaci se izvlače korišteći isti komunikacijski kanal koji se koristi za ubacivanje SQL koda. Ovo je najizravnija vrsta napada, u kojoj se dohvaćeni podaci prikazuju izravno na web stranici aplikacije (ova vrsta napada je pokazana na primjeru)
-- **Napad izvan kanala** - Podaci se dohvaćaju koristeći drugačiji kanal (npr. slanje e-maila s rezultatima upita napadaču)
+- **Napad unutar kanala** - Podaci se izvlače korišteći isti komunikacijski kanal koji se koristi za ubacivanje SQL koda. Ovo je najizravnija vrsta napada u kojoj se dohvaćeni podaci prikazuju izravno na web stranici aplikacije (ova vrsta napada je pokazana na primjeru).
+- **Napad izvan kanala** - Podaci se dohvaćaju koristeći drugačiji kanal (npr. slanje e-maila s rezultatima upita napadaču).
 - **Slijep napad** - Nema stvarnog prijenosa podataka iz baze podataka prema napadaču. Umjesto toga, napadač može rekonstruirati informacije slanjem određenih upita i promatranjem ponašanja DBMS-a, kao što su kašnjenja u odgovoru ili različiti odgovori aplikacije ovisno o tome je li upit istinit ili lažan.
 
-**Najčešće tehnike za iskorištavanje pronađenih ranjivosti, koje mogu biti korištene zasebno ili kombiniranjem više tehnika od jednom:**
+**Najčešće tehnike za iskorištavanje pronađenih ranjivosti koje mogu biti korištene zasebno ili kombiniranjem više tehnika od jednom:**
 
 - **UNION operator** - Može se koristiti kada se ranjivost dogodi u SELECT naredbi, omogućujući kombiniranje dva upita u jedan rezultat.
 - **Logička metoda** - Koristi logičke uvjete kako bi se provjerilo jesu li određeni uvjeti istiniti ili lažni, na temelju proučavanja HTTP odgovora.
-- **Namjerno izazivanje greške** - Tehnika prisiljavanja baze podataka da generira grešku, kako bi napadač na temelju tih informacija mogao poboljšati svoj zlonamjerni upit. Namjernim izazivanjem greške napadači mogu dobiti informacije o bazi podataka i njenoj strukturi.
-- **Vremenska odgoda** - Koristi naredbe poput SLEEP za odgađanje odgovora u uvjetnim upitima. Korisno kada se ne dobiva nikakav odgovor, jer proučavanjem vremena potrebnog za odgovor napadač može saznati je li upit istinit ili lažan.
+- **Namjerno izazivanje greške** - Tehnika prisiljavanja baze podataka da generira grešku kako bi napadač na temelju tih informacija mogao poboljšati svoj zlonamjerni upit. Namjernim izazivanjem greške napadači mogu dobiti informacije o bazi podataka i njenoj strukturi.
+- **Vremenska odgoda** - Koristi naredbe poput SLEEP za odgađanje odgovora u uvjetnim upitima. Korisno kada se ne dobiva nikakav odgovor jer proučavanjem vremena potrebnog za odgovor napadač može saznati je li upit istinit ili lažan.
 
+**Neke velike kompanije koje su bile žrtv napada SQL injekcijom:**
 
-**Neke velike kompanije koje su bile žrtve SQL injection napada:**
-
-  - **Sony Pictures**: 2011 godine SQL injection napad rezultirao je krađom otprilike 77 milijuna PlayStation Network računa, ukupne štete oko 170 milijuna dolara
-  - **Yahoo!**: Tvrtka je bila žrtva više napada između 2013 i 2016 godine, pri čemu je u najvećem napadu ukradeno preko pola milijuna email adresa i lozinka. Sveukupna šteta svih napada bila je preko 3 milijarde korisničkih računa.
-  - **JPMorgan Chase**: JPMorgan Chase je jedna on nejvećih banka u Sjedinjenim Američkim državama. 2014 godine objavili su da su računi od preko 76 milijuna kućanstva kompromizirani. Ukradeni podaci uključuju imena, brojeve mobitle i email adrese korisnika, ali ne podatke vezane uz njihove financije.
+- **Sony Pictures**: 2011. godine napad SQL injekcijom rezultirao je krađom otprilike 77 milijuna PlayStation Network računa, ukupne štete oko 170 milijuna dolara.
+- **Yahoo!**: Tvrtka je bila žrtva više napada između 2013. i 2016. godine, pri čemu je u najvećem napadu ukradeno preko pola milijuna email adresa i lozinka. Sveukupna šteta svih napada bila je preko 3 milijarde korisničkih računa.
+- **JPMorgan Chase**: JPMorgan Chase je jedna on nejvećih banka u Sjedinjenim Američkim Državama. 2014. godine objavili su da su računi od preko 76 milijuna kućanstva kompromizirani. Ukradeni podaci uključuju imena, brojeve mobitela i e-mail adrese korisnika, ali ne podatke vezane uz njihove financije.
 
 **Kako spriječiti napad SQL injekcijom?**
 
-- **Korištenje pripremljenih upita** - pripremljeni upiti omogućuju da se korisnički unos tretira isključivo kao podatak, a ne kao dio SQL naredbe, čime se sprječava manipulacija strukturom upita. Ovo je najučinkovitija i najčešće preporučena metoda zaštite od SQL injekcije.
-- **Validacija i filtriranje korisničkih unosa** - Ulazni podaci moraju se provjeravati na ispravnost tipa, formata i dužine. Primjerice, ako se očekuje unos JMBAG-a, potrebno je provjeriti da li je unos u ispravnom formatu (samo znamenke od 0 do 9, točno 10 znamenka).
+- **Korištenje pripremljenih upita** - Pripremljeni upiti omogućuju da se korisnički unos tretira isključivo kao podatak, a ne kao dio SQL naredbe, čime se sprječava manipulacija strukturom upita. Ovo je najučinkovitija i najčešće preporučena metoda zaštite od SQL injekcije.
+- **Validacija i filtriranje korisničkih unosa** - Potrebno je provjeriti ispravnost tipa, formata i dužine ulaznih podataka. Primjerice, ako se očekuje unos JMBAG-a, potrebno je provjeriti je li unos u ispravnom formatu (samo znamenke od 0 do 9, točno 10 znamenaka).
 - **Princip najmanjih privilegija** - Korisnički računi baze podataka kojima pristupa aplikacija trebaju imati samo minimalne potrebne dozvole. Time se ograničava potencijalna šteta u slučaju uspješnog napada.
 - **Sakrivanje i maskiranje poruka o greškama** - Poruke o greškama koje baza podataka vraća ne bi trebale otkrivati detalje o strukturi baze podataka ili upitima, jer takve informacije mogu pomoći napadaču.
-
 
 ## Osnovni primjer SQL injekcije
 
@@ -60,9 +58,8 @@ Pretpostavimo da smo student i imamo pristup nekakvoj formi za pretraživanje po
 
 Testirati ranjivost možemo na sljedeće načine:
 
-- Korištenjem `OR` uvjeta - `' OR '1'='1 #`, rezultat bi trebao biti jedan ili više studenata (**Oprez:** mnogo aplikacija koristi jedan odgovor za izvršavanje više od jednog upita. Ukoliko jedan od njih sadrži DELETE ili DROP naredbu, može doći do brisanja tablice ili baze podataka)
-- Korištenjem funckije za odgodu izvršavanja upita - `0246801234' AND SLEEP(3) #`, rezultat bi trebao biti odgovor nakon 3 sekunde
-
+- Korištenjem `OR` uvjeta - `' OR '1'='1 #`, rezultat bi trebao biti jedan ili više studenata (**Oprez:** mnogo aplikacija koristi jedan odgovor za izvršavanje više od jednog upita. Ukoliko jedan od njih sadrži DELETE ili DROP naredbu, može doći do brisanja tablice ili baze podataka).
+- Korištenjem funckije za odgodu izvršavanja upita - `0246801234' AND SLEEP(3) #`, rezultat bi trebao biti odgovor nakon 3 sekunde.
 
 ### Broj stupaca u tablici
 
@@ -77,6 +74,7 @@ Sad moramo saznati koliko stupaca ima tablica, da bi kasnije mogli koristiti UNI
 ```
 
 ### Imena svih tablica
+
 Sljedeći korak je otkriti koje sve tablice postoje u bazi podataka i pronaći strukturu tablice u kojoj se bilježi prisutnost. U formu unosimo:
 
 ```text showLineNumbers=false
@@ -86,11 +84,11 @@ WHERE table_schema = database() #
 ```
 
 - `information_schema` - posebna baza podataka u MySQL-u koja sadrži podatke o svim drugim bazama podataka
-    - `tables` - tablica s informacijama o svim drugim tablicama
-        - `table_name` - stupac koji sadrži sva imena tablica
-        - `table_schema` - stupac koji sadrži naziv baze podataka
+  - `tables` - tablica s informacijama o svim drugim tablicama
+    - `table_name` - stupac koji sadrži sva imena tablica
+    - `table_schema` - stupac koji sadrži naziv baze podataka
 - `database()` - funkcija koja vraća naziv trenutno aktivne baze podataka
-- U stupce koji nam ne trebaju unosimo nasumične podatke da bi broj stupaca u oba upita ostao isti
+- U stupce koji nam ne trebaju unosimo nasumične podatke da bi broj stupaca u oba upita ostao isti.
 
 ### Strukture određenih tablica
 
@@ -147,7 +145,6 @@ Zaključimo da predavanje je točna vrijednost za stud_predmet 3 i na temelju to
 ```js title="upit.js" {"1. const jmbag simulira korisnički unos (npr. forma)":3-5} collapse={10-21, 23-28}
 const POST = async ({ request }) => {
   try {
-
     const jmbag = "0246801234";
     const upit = "SELECT * FROM student WHERE jmbag = '" + jmbag + "'";
 
@@ -158,23 +155,23 @@ const POST = async ({ request }) => {
     if (rezultati.length === 0) {
       return new Response(JSON.stringify({ error: "Student nije pronađen" }), {
         status: 404,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     return new Response(JSON.stringify(rezultati), {
       status: 200,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error prilikom izvršavanja upita:", error);
 
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
-}
+};
 ```
 
 ### Kako popraviti ovaj primjer?
